@@ -1,5 +1,6 @@
 from __future__ import print_function
-import pandas
+import pandas as pd
+import numpy as np
 from sklearn import model_selection
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.neighbors import KNeighborsClassifier
@@ -7,84 +8,138 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
 import pickle
 import datahandler
 
 
-def run():
-    # Split-out validation dataset
-    dataset = load_data_set()
-    array = dataset.values
+def all_Algorithms():
+    all_algorithms_score=[]
+    all_algorithms_name=["KNN","DecisionTree","MLPClassifier","Naive Bayes","SVM"]
+
+    #load data
+    dataset_train = load_data_set_train()
+    array = dataset_train.values
     x = array[:, 1:35]
     y = array[:, 0]
-    validation_size = 0.10
+    validation_size = 0.20
     seed = 7
-    x_train, x_validation, y_train, y_validation = model_selection.train_test_split(x, y, test_size=validation_size,
-                                                                                    random_state=seed)
+    x_train, x_validation, y_train, y_validation = model_selection.train_test_split(x, y, test_size=validation_size,random_state=seed)
+    accuracy=knn_Algorithms(x_train, x_validation, y_train, y_validation)
+    all_algorithms_score.append(accuracy)
+    
+    accuracy=DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation)
+    all_algorithms_score.append(accuracy)
+    
+    accuracy=MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation)
+    all_algorithms_score.append(accuracy)
+    
+    accuracy=NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation)
+    all_algorithms_score.append(accuracy)
+    
+    accuracy=SVM_Algorithms(x_train, x_validation, y_train, y_validation)
+    all_algorithms_score.append(accuracy)
+    
+    return all_algorithms_name,all_algorithms_score
 
-    best_k = choose_best_k_to_knn(x_train, y_train, x_validation, y_validation)
-    #print("\nThe best k to KNN: %s" % best_k)
 
-    # Algorithms
+def knn_Algorithms(x_train, x_validation, y_train, y_validation):                                                                                       
+    # knn Algorithms
+    best_k,max_value= choose_best_k_to_knn(x_train, y_train, x_validation, y_validation)
     knn = KNeighborsClassifier(n_neighbors=best_k)
-    dtc = DecisionTreeClassifier()
-    mlp = MLPClassifier(random_state=seed, solver='lbfgs')
-    nb = GaussianNB()
-    svc = SVC(kernel='poly', gamma="auto")
-
-    # Make predictions on validation dataset
     knn.fit(x_train, y_train)
     predictions = knn.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
-    algorithm = knn
-    algorithm_chosen = "KNN (n_neighbors= %i)" % best_k
+    print("KNN score:",accuracy)
+    return accuracy
 
+def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):   
+    #DecisionTree Algorithms
+    dtc = DecisionTreeClassifier()
     dtc.fit(x_train, y_train)
     predictions = dtc.predict(x_validation)
-    accuracy_aux = accuracy_score(y_validation, predictions)
-    if accuracy_aux > accuracy:
-        accuracy = accuracy_aux
-        algorithm = dtc
-        algorithm_chosen = "Decision Tree"
-
+    accuracy = accuracy_score(y_validation, predictions)
+    print("\nDecisionTree score:",accuracy)
+    return accuracy
+    
+def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):    
+    #MLPClassifier Algorithms
+    seed = 7
+    mlp = MLPClassifier(random_state=seed, solver='lbfgs')
     mlp.fit(x_train, y_train)
     predictions = mlp.predict(x_validation)
-    accuracy_aux = accuracy_score(y_validation, predictions)
-    if accuracy_aux > accuracy:
-        accuracy = accuracy_aux
-        algorithm = mlp
-        algorithm_chosen = "MultiLayer Perceptron"
-
+    accuracy = accuracy_score(y_validation, predictions)
+    print("\nMLPClassifier:",accuracy)
+    return accuracy
+     
+def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):     
+    #Naive Bayes Algorithms
+    nb = GaussianNB()
     nb.fit(x_train, y_train)
     predictions = nb.predict(x_validation)
-    accuracy_aux = accuracy_score(y_validation, predictions)
-    if accuracy_aux > accuracy:
-        accuracy = accuracy_aux
-        algorithm = nb
-        algorithm_chosen = "Naive Bayes"
+    accuracy= accuracy_score(y_validation, predictions)
+    print("\nNaive Bayes:",accuracy)
+    return accuracy
 
+def SVM_Algorithms(x_train, x_validation, y_train, y_validation):         
+    #SVM Algorithms
+    svc = SVC(kernel='poly', gamma="auto")
     svc.fit(x_train, y_train)
     predictions = svc.predict(x_validation)
-    accuracy_aux = accuracy_score(y_validation, predictions)
-    if accuracy_aux > accuracy:
-        algorithm = svc
-        algorithm_chosen = "SVM"
-
-    print("\nAlgorithm Chosen: " + algorithm_chosen)
-    print("Accuracy: %f" % accuracy)
-    #print(accuracy_score(y_validation, predictions))
-    #print(confusion_matrix(y_validation, predictions))
-    #print(classification_report(y_validation, predictions))
+    accuracy = accuracy_score(y_validation, predictions)
+    print("\nSVM Bayes:",accuracy)
+    return accuracy
 
 def choose_best_k_to_knn(x_train, y_train, x_validation, y_validation):
+    all_mae_histories = []
     accuracy = 0
     k = 1
-    for i in range(3, 30):
-        knn = KNeighborsClassifier(n_neighbors=i)
-        knn.fit(x_train, y_train)
-        predictions = knn.predict(x_validation)
-        accuracy_aux = accuracy_score(y_validation, predictions)
-        if accuracy_aux > accuracy:
-            accuracy = accuracy_aux
-            k = i
-    return k
+    for i in range(1, 30):
+        average_mae_history=K_vertify_knn(x_train,y_train,i)
+        all_mae_histories.append(average_mae_history)
+    index,max_value = smooth_curve(all_mae_histories)
+    return index,max_value
+
+def K_vertify_knn(train_data,train_targets,knnnumber):
+    #K折验证，适用于数据集较少的数据集
+    all_mae_histories = []
+    k = 10
+    num_val_samples = len(train_data) // k
+    for i in range(k):
+        # 准备验证数据，第K个分区的数据
+        val_data = train_data[i * num_val_samples: (i + 1) * num_val_samples]
+        val_targets = train_targets[i * num_val_samples: (i + 1) * num_val_samples]
+
+        # 准备训练数据，其他所有分区的数据
+        partial_train_data = np.concatenate(
+            [train_data[:i * num_val_samples],
+             train_data[(i + 1) * num_val_samples:]],
+            axis=0)
+        partial_train_targets = np.concatenate(
+            [train_targets[:i * num_val_samples],
+             train_targets[(i + 1) * num_val_samples:]],
+            axis=0)
+        # 构建 Keras 模型
+        knn = KNeighborsClassifier(n_neighbors=knnnumber)
+        # 训练模式
+        knn.fit(partial_train_data, partial_train_targets)
+        predictions = knn.predict(val_data)
+        accuracy_aux = accuracy_score(val_targets, predictions)
+        all_mae_histories.append(accuracy_aux)
+    #K折验证分数平均
+    average_mae_history = np.mean(all_mae_histories)
+    return average_mae_history
+
+#绘制验证分数，找到最佳k
+def smooth_curve(points, factor=0.9):
+    index=-1
+    max_value=-999
+    plt.plot(range(1, len(points) + 1), points)
+    plt.xlabel('k value')
+    plt.ylabel('grade')
+    plt.show()
+    for i, val in enumerate(points):
+        if max_value < val:
+            index=i
+            max_value=val
+    return index,max_value
