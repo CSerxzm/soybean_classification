@@ -15,6 +15,7 @@ import datahandler
 
 def all_Algorithms():
     all_algorithms_score=[]
+    all_algorithms_score_avg=[]
     all_algorithms_name=["KNN","DecisionTree","MLPClassifier","Naive Bayes","SVM"]
 
     #load data
@@ -25,22 +26,27 @@ def all_Algorithms():
     validation_size = 0.20
     seed = 7
     x_train, x_validation, y_train, y_validation = model_selection.train_test_split(x, y, test_size=validation_size,random_state=seed)
-    accuracy=knn_Algorithms(x_train, x_validation, y_train, y_validation)
+    accuracy,average_mae_history=knn_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
+    all_algorithms_score_avg.append(average_mae_history)
     
-    accuracy=DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation)
+    accuracy,average_mae_history=DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
+    all_algorithms_score_avg.append(average_mae_history)
     
-    accuracy=MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation)
+    accuracy,average_mae_history=MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
+    all_algorithms_score_avg.append(average_mae_history)
     
-    accuracy=NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation)
+    accuracy,average_mae_history=NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
+    all_algorithms_score_avg.append(average_mae_history)
     
-    accuracy=SVM_Algorithms(x_train, x_validation, y_train, y_validation)
+    accuracy,average_mae_history=SVM_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
+    all_algorithms_score_avg.append(average_mae_history)
     
-    return all_algorithms_name,all_algorithms_score
+    return all_algorithms_name,all_algorithms_score,all_algorithms_score_avg
 
 
 def knn_Algorithms(x_train, x_validation, y_train, y_validation):                                                                                       
@@ -51,7 +57,7 @@ def knn_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = knn.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     print("KNN:",accuracy)
-    return accuracy
+    return accuracy,max_value
 
 def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):   
     #DecisionTree Algorithms
@@ -85,7 +91,7 @@ def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = dtc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     print("\nDecisionTree:",accuracy)
-    return accuracy
+    return accuracy,average_mae_history
     
 def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):    
     #MLPClassifier Algorithms
@@ -120,7 +126,7 @@ def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = mlp.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     print("\nMLPClassifier:",accuracy)
-    return accuracy
+    return accuracy,average_mae_history
      
 def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):     
     #Naive Bayes Algorithms
@@ -154,7 +160,7 @@ def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = nb.predict(x_validation)
     accuracy= accuracy_score(y_validation, predictions)
     print("\nNaive Bayes:",accuracy)
-    return accuracy
+    return accuracy,average_mae_history
 
 def SVM_Algorithms(x_train, x_validation, y_train, y_validation):         
     #SVM Algorithms
@@ -188,7 +194,7 @@ def SVM_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = svc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     print("\nSVM Bayes:",accuracy)
-    return accuracy
+    return accuracy,average_mae_history
 
 def choose_best_k_to_knn(x_train, y_train, x_validation, y_validation):
     all_mae_histories = []
