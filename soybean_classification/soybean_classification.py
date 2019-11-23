@@ -1,22 +1,27 @@
 from __future__ import print_function
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+    
+import os
+from sklearn.externals import joblib
+
 from sklearn import model_selection
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score
+
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
-import matplotlib.pyplot as plt
-import pickle
+
 import datahandler
 
 
 def all_Algorithms():
     all_algorithms_score=[]
     all_algorithms_score_avg=[]
-    all_algorithms_name=["KNN","DecisionTree","MLPClassifier","Naive Bayes","SVM"]
+    all_algorithms_name=["KNN","DecisionTree","MLPClassifier","NaiveBayes","SVM"]
 
     #load data
     dataset_train = load_data_set_train()
@@ -56,6 +61,7 @@ def knn_Algorithms(x_train, x_validation, y_train, y_validation):
     knn.fit(x_train, y_train)
     predictions = knn.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
+    save_model(knn,"KNN")
     print("KNN:",accuracy)
     return accuracy,max_value
 
@@ -90,6 +96,7 @@ def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):
 
     predictions = dtc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
+    save_model(dtc,"DecisionTree")
     print("\nDecisionTree:",accuracy)
     return accuracy,average_mae_history
     
@@ -125,6 +132,7 @@ def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):
 
     predictions = mlp.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
+    save_model(mlp,"MLPClassifier")
     print("\nMLPClassifier:",accuracy)
     return accuracy,average_mae_history
      
@@ -159,6 +167,7 @@ def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):
 
     predictions = nb.predict(x_validation)
     accuracy= accuracy_score(y_validation, predictions)
+    save_model(nb,"NaiveBayes")
     print("\nNaive Bayes:",accuracy)
     return accuracy,average_mae_history
 
@@ -193,6 +202,7 @@ def SVM_Algorithms(x_train, x_validation, y_train, y_validation):
 
     predictions = svc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
+    save_model(svc,"SVM")
     print("\nSVM Bayes:",accuracy)
     return accuracy,average_mae_history
 
@@ -249,3 +259,9 @@ def smooth_curve(points, factor=0.9):
             index=i
             max_value=val
     return index,max_value
+
+def save_model(model_temp,model_name):
+    dirs = "../testModel"
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+    joblib.dump(model_temp, dirs+"/"+model_name)
