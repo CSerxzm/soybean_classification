@@ -50,23 +50,73 @@ def knn_Algorithms(x_train, x_validation, y_train, y_validation):
     knn.fit(x_train, y_train)
     predictions = knn.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
-    print("KNN score:",accuracy)
+    print("KNN:",accuracy)
     return accuracy
 
 def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):   
     #DecisionTree Algorithms
-    dtc = DecisionTreeClassifier()
-    dtc.fit(x_train, y_train)
+    all_mae_histories = []
+    k = 10
+    num_val_samples = len(x_train) // k
+    for i in range(k):
+        # 准备验证数据，第K个分区的数据
+        val_data = x_train[i * num_val_samples: (i + 1) * num_val_samples]
+        val_targets = y_train[i * num_val_samples: (i + 1) * num_val_samples]
+
+        # 准备训练数据，其他所有分区的数据
+        partial_train_data = np.concatenate(
+            [x_train[:i * num_val_samples],
+             x_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        partial_train_targets = np.concatenate(
+            [y_train[:i * num_val_samples],
+             y_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        # 构建 Keras 模型
+        dtc = DecisionTreeClassifier()
+        # 训练模式
+        dtc.fit(partial_train_data, partial_train_targets)
+        predictions = dtc.predict(val_data)
+        accuracy_aux = accuracy_score(val_targets, predictions)
+        all_mae_histories.append(accuracy_aux)
+    #K折验证分数平均,没有使用
+    average_mae_history = np.mean(all_mae_histories)
+
     predictions = dtc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
-    print("\nDecisionTree score:",accuracy)
+    print("\nDecisionTree:",accuracy)
     return accuracy
     
 def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):    
     #MLPClassifier Algorithms
     seed = 7
-    mlp = MLPClassifier(random_state=seed, solver='lbfgs')
-    mlp.fit(x_train, y_train)
+    all_mae_histories = []
+    k = 10
+    num_val_samples = len(x_train) // k
+    for i in range(k):
+        # 准备验证数据，第K个分区的数据
+        val_data = x_train[i * num_val_samples: (i + 1) * num_val_samples]
+        val_targets = y_train[i * num_val_samples: (i + 1) * num_val_samples]
+
+        # 准备训练数据，其他所有分区的数据
+        partial_train_data = np.concatenate(
+            [x_train[:i * num_val_samples],
+             x_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        partial_train_targets = np.concatenate(
+            [y_train[:i * num_val_samples],
+             y_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        # 构建 Keras 模型
+        mlp = MLPClassifier(random_state=seed, solver='lbfgs')
+        # 训练模式
+        mlp.fit(partial_train_data, partial_train_targets)
+        predictions = mlp.predict(val_data)
+        accuracy_aux = accuracy_score(val_targets, predictions)
+        all_mae_histories.append(accuracy_aux)
+    #K折验证分数平均,没有使用
+    average_mae_history = np.mean(all_mae_histories)
+
     predictions = mlp.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     print("\nMLPClassifier:",accuracy)
@@ -74,8 +124,33 @@ def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):
      
 def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):     
     #Naive Bayes Algorithms
-    nb = GaussianNB()
-    nb.fit(x_train, y_train)
+    all_mae_histories = []
+    k = 10
+    num_val_samples = len(x_train) // k
+    for i in range(k):
+        # 准备验证数据，第K个分区的数据
+        val_data = x_train[i * num_val_samples: (i + 1) * num_val_samples]
+        val_targets = y_train[i * num_val_samples: (i + 1) * num_val_samples]
+
+        # 准备训练数据，其他所有分区的数据
+        partial_train_data = np.concatenate(
+            [x_train[:i * num_val_samples],
+             x_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        partial_train_targets = np.concatenate(
+            [y_train[:i * num_val_samples],
+             y_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        # 构建 Keras 模型
+        nb = GaussianNB()
+        # 训练模式
+        nb.fit(partial_train_data, partial_train_targets)
+        predictions = nb.predict(val_data)
+        accuracy_aux = accuracy_score(val_targets, predictions)
+        all_mae_histories.append(accuracy_aux)
+    #K折验证分数平均,没有使用
+    average_mae_history = np.mean(all_mae_histories)
+
     predictions = nb.predict(x_validation)
     accuracy= accuracy_score(y_validation, predictions)
     print("\nNaive Bayes:",accuracy)
@@ -83,8 +158,33 @@ def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):
 
 def SVM_Algorithms(x_train, x_validation, y_train, y_validation):         
     #SVM Algorithms
-    svc = SVC(kernel='poly', gamma="auto")
-    svc.fit(x_train, y_train)
+    all_mae_histories = []
+    k = 10
+    num_val_samples = len(x_train) // k
+    for i in range(k):
+        # 准备验证数据，第K个分区的数据
+        val_data = x_train[i * num_val_samples: (i + 1) * num_val_samples]
+        val_targets = y_train[i * num_val_samples: (i + 1) * num_val_samples]
+
+        # 准备训练数据，其他所有分区的数据
+        partial_train_data = np.concatenate(
+            [x_train[:i * num_val_samples],
+             x_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        partial_train_targets = np.concatenate(
+            [y_train[:i * num_val_samples],
+             y_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        # 构建 Keras 模型
+        svc = SVC(kernel='poly', gamma="auto")
+        # 训练模式
+        svc.fit(partial_train_data, partial_train_targets)
+        predictions = svc.predict(val_data)
+        accuracy_aux = accuracy_score(val_targets, predictions)
+        all_mae_histories.append(accuracy_aux)
+    #K折验证分数平均,没有使用
+    average_mae_history = np.mean(all_mae_histories)
+
     predictions = svc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     print("\nSVM Bayes:",accuracy)

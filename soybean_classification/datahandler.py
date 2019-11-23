@@ -4,8 +4,6 @@ import pandas as pd
 import numpy
 from sklearn.preprocessing import Imputer
 
-import soybean_classification
-
 
 def load_data_set_train():
     url = "../data/soybean-large.data"

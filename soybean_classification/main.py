@@ -17,7 +17,7 @@ def get_maxalgorithms(all_algorithms_name,all_algorithms_score):
         if max_value < i :
             max_index=all_algorithms_score.index(i)
             max_value=i
-    return max_value,all_algorithms_name[max_index]                      
+    return max_value,all_algorithms_name[max_index]                  
 
 if __name__ == '__main__':
     
