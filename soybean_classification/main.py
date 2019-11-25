@@ -8,8 +8,7 @@ def showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg):
     x = np.arange(5)
     plt.bar(x-0.15,all_algorithms_score,width=0.3,label="vaildate_score")
     plt.bar(x+0.15,all_algorithms_score_avg,width=0.3,label="avg_score")
-    plt.legend(bbox_to_anchor=(1,1),
-                 loc="upper right",
+    plt.legend(bbox_to_anchor=(1.01,1),
                  ncol=1,
                  mode="None",
                  borderaxespad=0,
