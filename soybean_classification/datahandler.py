@@ -15,6 +15,8 @@ def load_data_set_train():
              'seed', 'mold-growth', 'seed-discolor', 'seed-size', 'shriveling', 'roots']
     dataset = pd.read_csv(url, names=names)
     dataset = dataset.replace({'?':np.nan})
+    for item in dataset.columns.values:
+        drop_col(dataset, item, cutoff=0.8)
     df1=dataset.iloc[:, 1:]
     df2=dataset.iloc[:, :1]
     imr= Imputer(missing_values = 'NaN', strategy = 'mean', axis = 0 )
@@ -24,7 +26,7 @@ def load_data_set_train():
     df=pd.concat([df2,df],axis=1)
     return df
 
-def load_data_set_test():
+def load_data_set_test(df_col_mean):
     url = "../data/soybean-large.data"
     names = ['Class', 'date', 'plant-stand', 'precip', 'temp', 'hail', 'crop-hist', 'area-damaged',
              'severity', 'seed-tmt', 'germination', 'plant-growth',
@@ -34,6 +36,12 @@ def load_data_set_test():
              'seed', 'mold-growth', 'seed-discolor', 'seed-size', 'shriveling', 'roots']
     dataset = pd.read_csv(url, names=names)
     dataset = dataset.replace({'?':np.nan})
+    
+    dictionary={}
+    for i in range(1,len(df_col_mean)):
+        dictionary[i]=df_col_mean
+    dataset.fillna(dictionary)
+    
     df1=dataset.iloc[:, 1:]
     df2=dataset.iloc[:, :1]
     imr= Imputer(missing_values = 'NaN', strategy = 'mean', axis = 0 )
@@ -41,9 +49,11 @@ def load_data_set_test():
     imputed_data = imr.transform(df1.values)
     df = pd.DataFrame(imputed_data) 
     df=pd.concat([df2,df],axis=1)
-    array = df.values
-    
-    x = array[:, 1:35]
-    y = array[:, 0]
+    return df
 
-    return y,x
+#剔除缺失值大于90%的列
+def drop_col(df, col_name, cutoff=0.9):
+    n = len(df)
+    cnt = df[col_name].count()
+    if (float(cnt) / n) < cutoff:
+        df.drop(col_name, axis=1, inplace=True)

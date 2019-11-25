@@ -26,8 +26,8 @@ def all_Algorithms():
     #load data
     dataset_train = load_data_set_train()
     array = dataset_train.values
-    x = array[:, 1:35]
-    y = array[:, 0]
+    x = array[:,1:len(list(dataset_train))-1]
+    y = array[:,0]
     validation_size = 0.20
     seed = 7
     x_train, x_validation, y_train, y_validation = model_selection.train_test_split(x, y, test_size=validation_size,random_state=seed)
@@ -51,14 +51,14 @@ def all_Algorithms():
     all_algorithms_score.append(accuracy)
     all_algorithms_score_avg.append(average_mae_history)
     
-    return all_algorithms_name,all_algorithms_score,all_algorithms_score_avg
+    return all_algorithms_name,all_algorithms_score,all_algorithms_score_avg,list(dataset_train),list(dataset_train.mean())
 
 
 def knn_Algorithms(x_train, x_validation, y_train, y_validation):                                                                                       
     # knn Algorithms
     best_k,max_value= choose_best_k_to_knn(x_train, y_train, x_validation, y_validation)
     knn = KNeighborsClassifier(n_neighbors=best_k)
-    knn.fit(x_train, y_train)
+    knn.fit(x_train,y_train)
     predictions = knn.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     save_model(knn,"KNN")
@@ -97,7 +97,7 @@ def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = dtc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     save_model(dtc,"DecisionTree")
-    print("\nDecisionTree:",accuracy)
+    print("DecisionTree:",accuracy)
     return accuracy,average_mae_history
     
 def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):    
@@ -133,7 +133,7 @@ def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = mlp.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     save_model(mlp,"MLPClassifier")
-    print("\nMLPClassifier:",accuracy)
+    print("MLPClassifier:",accuracy)
     return accuracy,average_mae_history
      
 def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):     
@@ -168,7 +168,7 @@ def NaiveBayes_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = nb.predict(x_validation)
     accuracy= accuracy_score(y_validation, predictions)
     save_model(nb,"NaiveBayes")
-    print("\nNaive Bayes:",accuracy)
+    print("Naive Bayes:",accuracy)
     return accuracy,average_mae_history
 
 def SVM_Algorithms(x_train, x_validation, y_train, y_validation):         
@@ -203,7 +203,7 @@ def SVM_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = svc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     save_model(svc,"SVM")
-    print("\nSVM Bayes:",accuracy)
+    print("SVM Bayes:",accuracy)
     return accuracy,average_mae_history
 
 def choose_best_k_to_knn(x_train, y_train, x_validation, y_validation):
@@ -213,7 +213,19 @@ def choose_best_k_to_knn(x_train, y_train, x_validation, y_validation):
     for i in range(1, 30):
         average_mae_history=K_vertify_knn(x_train,y_train,i)
         all_mae_histories.append(average_mae_history)
-    index,max_value = smooth_curve(all_mae_histories)
+    index=-1
+    max_value=-999
+    
+    #可视化画图部分
+    #plt.plot(range(1, len(all_mae_histories) + 1), all_mae_histories)
+    #plt.xlabel('k value')
+    #plt.ylabel('grade')
+    #plt.show()
+    
+    for i, val in enumerate(all_mae_histories):
+        if max_value < val:
+            index=i
+            max_value=val
     return index,max_value
 
 def K_vertify_knn(train_data,train_targets,knnnumber):
@@ -245,20 +257,6 @@ def K_vertify_knn(train_data,train_targets,knnnumber):
     #K折验证分数平均
     average_mae_history = np.mean(all_mae_histories)
     return average_mae_history
-
-#绘制验证分数，找到最佳k
-def smooth_curve(points, factor=0.9):
-    index=-1
-    max_value=-999
-    plt.plot(range(1, len(points) + 1), points)
-    plt.xlabel('k value')
-    plt.ylabel('grade')
-    plt.show()
-    for i, val in enumerate(points):
-        if max_value < val:
-            index=i
-            max_value=val
-    return index,max_value
 
 def save_model(model_temp,model_name):
     dirs = "../testModel"

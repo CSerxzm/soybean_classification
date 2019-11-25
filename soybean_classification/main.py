@@ -35,19 +35,26 @@ def test_algorithms(test_x,test_y,model_name):
     model_temp = joblib.load(dirs+"/"+model_name)
     predictions=model_temp.predict(test_x) 
     accuracy= accuracy_score(test_y, predictions)
-    print("accuracy:",accuracy)             
+    print("准确度:",accuracy)             
 
 if __name__ == '__main__':
     
-    all_algorithms_name,all_algorithms_score,all_algorithms_score_avg=all_Algorithms()
+    all_algorithms_name,all_algorithms_score,all_algorithms_score_avg,df_name,df_col_mean=all_Algorithms()
     
     showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg)
     accuracy,algorithm_chosen=get_maxalgorithms(all_algorithms_name,all_algorithms_score)
     
-    print("\nAlgorithm Chosen: " + algorithm_chosen)
-    print("Accuracy: %f" % accuracy)
+    print("\n最佳算法: " + algorithm_chosen)
+    print("准确度: %f" % accuracy)
     
     #使用做好的乱模型测试
     print("\n测试部分:")
-    df2_test,df1_test= load_data_set_test()
-    test_algorithms(df1_test,df2_test,algorithm_chosen)
+    print("选择算法:",algorithm_chosen)
+    df_test= load_data_set_test(df_col_mean)
+    for item in list(df_test):
+        if(item not in df_name):
+            df_test.drop(item, axis=1, inplace=True)
+    array = df_test.values
+    x = array[:, 1:len(list(df_test))-1]
+    y = array[:, 0]
+    test_algorithms(x,y,algorithm_chosen)
