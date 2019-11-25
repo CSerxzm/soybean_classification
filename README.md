@@ -10,12 +10,12 @@ d）讨论模型中参数的影响，给出参数的最佳取值范围
 e）尝试分析算法存在的问题以及可能改进的方法
 </pre>
 <h3>实现算法</h3>
-<ol>
-	<li>KNN</li>
-	<li>DecisionTree</li>
-	<li>MLPClassifier</li>
-	<li>Naive Bayes</li>
-	<li>SVM</li>
-</ol>
-效果图：
+<pre>
+	1.KNN
+	2.DecisionTree
+	3.MLPClassifier
+	4.Naive Bayes
+	5.SVM
+</pre>
+<h3>效果图</h3>
 <p><img src="https://github.com/CSerxzm/soybean_classification/blob/xzm/image_result/image.png" alt="图片加载中"/></p>
