@@ -11,8 +11,7 @@ from sklearn.metrics import accuracy_score
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import BaggingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -27,8 +26,8 @@ def all_Algorithms():
     #load data
     dataset_train = load_data_set_train()
     array = dataset_train.values
-    x_train = array[:,1:len(list(dataset_train))-1]
-    x_train = array[:,0]
+    x= array[:,1:len(list(dataset_train))-1]
+    y= array[:,0]
     validation_size = 0.2
     seed = 7
     x_train, x_validation, y_train, y_validation = model_selection.train_test_split(x, y, test_size=validation_size,random_state=seed)
