@@ -17,6 +17,7 @@ e）尝试分析算法存在的问题以及可能改进的方法
 	4.Naive Bayes
 	5.SVM
 	6.RandomForestClassifier
+	7.Bagging
 </pre>
 <h3>效果图</h3>
 <p><img src="https://github.com/CSerxzm/soybean_classification/blob/xzm/image_result/image.png" alt="图片加载中"/></p>

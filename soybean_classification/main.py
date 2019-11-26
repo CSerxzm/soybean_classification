@@ -5,7 +5,7 @@ from matplotlib.font_manager import FontProperties
 
 def showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg):
     font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=14)
-    x = np.arange(6)
+    x = np.arange(7)
     plt.bar(x-0.15,all_algorithms_score,width=0.3,label="vaildate_score")
     plt.bar(x+0.15,all_algorithms_score_avg,width=0.3,label="avg_score")
     plt.legend(bbox_to_anchor=(1.01,1),
@@ -14,7 +14,7 @@ def showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg):
                  borderaxespad=0,
                  shadow=False,
                  fancybox=True)
-    plt.xticks(np.arange(6),all_algorithms_name, rotation=90)#rotation控制倾斜角度
+    plt.xticks(np.arange(7),all_algorithms_name, rotation=90)#rotation控制倾斜角度
     plt.xlabel(u'algorithms',FontProperties=font)
     plt.ylabel(u'score',FontProperties=font)
     plt.title(u'算法结果', FontProperties=font)
