@@ -3,16 +3,16 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import Imputer
-
-
-def load_data_set_train():
-    url = "../data/soybean-large.data"
-    names = ['Class', 'date', 'plant-stand', 'precip', 'temp', 'hail', 'crop-hist', 'area-damaged',
+names = ['Class', 'date', 'plant-stand', 'precip', 'temp', 'hail', 'crop-hist', 'area-damaged',
              'severity', 'seed-tmt', 'germination', 'plant-growth',
              'leaves', 'leafspots-halo', 'leafspots-marg', 'leafspot-size', 'leaf-shread', 'leaf-malf',
              'leaf-mild', 'stem', 'lodging', 'stem-cankers', 'canker-lesion', 'fruiting-bodies',
              'external decay', 'mycelium', 'int-discolor', 'sclerotia', 'fruit-pods', 'fruit spots',
              'seed', 'mold-growth', 'seed-discolor', 'seed-size', 'shriveling', 'roots']
+
+def load_data_set_train():
+    url = "../data/soybean-large.data"
+    
     dataset = pd.read_csv(url, names=names)
     dataset = dataset.replace({'?':np.nan})
     for item in dataset.columns.values:
@@ -28,12 +28,7 @@ def load_data_set_train():
 
 def load_data_set_test(df_col_mean):
     url = "../data/soybean-large.data"
-    names = ['Class', 'date', 'plant-stand', 'precip', 'temp', 'hail', 'crop-hist', 'area-damaged',
-             'severity', 'seed-tmt', 'germination', 'plant-growth',
-             'leaves', 'leafspots-halo', 'leafspots-marg', 'leafspot-size', 'leaf-shread', 'leaf-malf',
-             'leaf-mild', 'stem', 'lodging', 'stem-cankers', 'canker-lesion', 'fruiting-bodies',
-             'external decay', 'mycelium', 'int-discolor', 'sclerotia', 'fruit-pods', 'fruit spots',
-             'seed', 'mold-growth', 'seed-discolor', 'seed-size', 'shriveling', 'roots']
+    
     dataset = pd.read_csv(url, names=names)
     dataset = dataset.replace({'?':np.nan})
     

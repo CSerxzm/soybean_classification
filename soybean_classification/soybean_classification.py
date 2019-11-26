@@ -10,6 +10,7 @@ from sklearn import model_selection
 from sklearn.metrics import accuracy_score
 
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
@@ -21,7 +22,7 @@ import datahandler
 def all_Algorithms():
     all_algorithms_score=[]
     all_algorithms_score_avg=[]
-    all_algorithms_name=["KNN","DecisionTree","MLPClassifier","NaiveBayes","SVM"]
+    all_algorithms_name=["KNN","DecisionTree","MLPClassifier","NaiveBayes","SVM","RandomForestClassifier"]
 
     #load data
     dataset_train = load_data_set_train()
@@ -48,6 +49,10 @@ def all_Algorithms():
     all_algorithms_score_avg.append(average_mae_history)
     
     accuracy,average_mae_history=SVM_Algorithms(x_train, x_validation, y_train, y_validation)
+    all_algorithms_score.append(accuracy)
+    all_algorithms_score_avg.append(average_mae_history)
+    
+    accuracy,average_mae_history=RandomForestClassifier_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
     all_algorithms_score_avg.append(average_mae_history)
     
@@ -203,7 +208,42 @@ def SVM_Algorithms(x_train, x_validation, y_train, y_validation):
     predictions = svc.predict(x_validation)
     accuracy = accuracy_score(y_validation, predictions)
     save_model(svc,"SVM")
-    print("SVM Bayes:",accuracy)
+    print("SVM:",accuracy)
+    return accuracy,average_mae_history
+
+def RandomForestClassifier_Algorithms(x_train, x_validation, y_train, y_validation):         
+    #SVM Algorithms
+    all_mae_histories = []
+    k = 10
+    num_val_samples = len(x_train) // k
+    for i in range(k):
+        # 准备验证数据，第K个分区的数据
+        val_data = x_train[i * num_val_samples: (i + 1) * num_val_samples]
+        val_targets = y_train[i * num_val_samples: (i + 1) * num_val_samples]
+
+        # 准备训练数据，其他所有分区的数据
+        partial_train_data = np.concatenate(
+            [x_train[:i * num_val_samples],
+             x_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        partial_train_targets = np.concatenate(
+            [y_train[:i * num_val_samples],
+             y_train[(i + 1) * num_val_samples:]],
+            axis=0)
+        # 构建 Keras 模型
+        rf = RandomForestClassifier(n_estimators=10, max_depth=10)
+        # 训练模式
+        rf.fit(partial_train_data, partial_train_targets)
+        predictions = rf.predict(val_data)
+        accuracy_aux = accuracy_score(val_targets, predictions)
+        all_mae_histories.append(accuracy_aux)
+    #K折验证分数平均,没有使用
+    average_mae_history = np.mean(all_mae_histories)
+
+    predictions = rf.predict(x_validation)
+    accuracy = accuracy_score(y_validation, predictions)
+    save_model(rf,"RandomForestClassifier")
+    print("RandomForestClassifier:",accuracy)
     return accuracy,average_mae_history
 
 def choose_best_k_to_knn(x_train, y_train, x_validation, y_validation):
