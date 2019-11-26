@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+
 from sklearn.preprocessing import Imputer
 names = ['Class', 'date', 'plant-stand', 'precip', 'temp', 'hail', 'crop-hist', 'area-damaged',
              'severity', 'seed-tmt', 'germination', 'plant-growth',

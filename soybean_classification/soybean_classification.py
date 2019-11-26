@@ -17,12 +17,12 @@ from sklearn.tree import DecisionTreeClassifier
 
 import datahandler
 
-
 def all_Algorithms():
     all_algorithms_score=[]
     all_algorithms_score_avg=[]
-    all_algorithms_name=["DecisionTree","MLPClassifier","RandomForestClassifier","Bagging"]
 
+    all_algorithms_name=["DecisionTree","MLPClassifier","RandomForestClassifier","Bagging"]
+    
     #load data
     dataset_train = load_data_set_train()
     array = dataset_train.values
@@ -73,6 +73,7 @@ def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):
         dtc = DecisionTreeClassifier()
         # 训练模式
         dtc.fit(partial_train_data, partial_train_targets)
+  
         predictions = dtc.predict(val_data)
         accuracy_aux = accuracy_score(val_targets, predictions)
         all_mae_histories.append(accuracy_aux)
@@ -83,6 +84,7 @@ def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):
     accuracy = accuracy_score(y_validation, predictions)
     save_model(dtc,"DecisionTree")
     print("DecisionTree:",accuracy)
+    
     return accuracy,average_mae_history
     
 def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):    
@@ -227,6 +229,5 @@ def save_model(model_temp,model_name):
     if not os.path.exists(dirs):
         os.makedirs(dirs)
     joblib.dump(model_temp, dirs+"/"+model_name)
-
-
+    
 all_Algorithms()
