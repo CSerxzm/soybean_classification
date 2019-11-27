@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
+import soybean_classification
 
 def showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg):
     font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=14)

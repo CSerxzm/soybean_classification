@@ -31,7 +31,7 @@ def all_Algorithms():
     validation_size = 0.2
     seed = 7
     x_train, x_validation, y_train, y_validation = model_selection.train_test_split(x, y, test_size=validation_size,random_state=seed)
-    
+
     accuracy,average_mae_history=DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation)
     all_algorithms_score.append(accuracy)
     all_algorithms_score_avg.append(average_mae_history)
@@ -229,5 +229,3 @@ def save_model(model_temp,model_name):
     if not os.path.exists(dirs):
         os.makedirs(dirs)
     joblib.dump(model_temp, dirs+"/"+model_name)
-    
-all_Algorithms()
