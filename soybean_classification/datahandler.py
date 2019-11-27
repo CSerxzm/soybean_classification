@@ -41,7 +41,7 @@ def load_data_set_test(df_col_mean):
     
     df1=dataset.iloc[:, 1:]
     df2=dataset.iloc[:, :1]
-    imr= Imputer(missing_values = 'NaN', strategy = 'mean', axis = 0 )
+    imr= Imputer(missing_values = 'NaN', strategy = 'most_frequent', axis = 0 )
     imr = imr.fit(df1)
     imputed_data = imr.transform(df1.values)
     df = pd.DataFrame(imputed_data) 
