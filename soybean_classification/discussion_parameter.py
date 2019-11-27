@@ -9,6 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from  mpl_toolkits import mplot3d
 
+from matplotlib.font_manager import FontProperties
+font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=14)
+
 #讨论随机数森林参数影响，子树的数目和树的深度
 def discussion_rfc(x_start,x_end,y_start,y_end):
     
@@ -58,13 +61,17 @@ def discussion_rfc_depth(x_start,x_end):
 
   
 def show_plt(x_start,x_end,all_mae_histories):
+   
     x=range(x_start,x_end)
     plt.figure()
     plt.plot(x,all_mae_histories,)
     plt.xlabel("depth")
     plt.ylabel("accuracy")
+    plt.title(u'深度讨论', FontProperties=font)
+    plt.show()
     
 def show_3d(x_start,x_end,y_start,y_end,all_mae_histories):
+    
     fig = plt.figure()  #定义新的三维坐标轴
     ax3 = plt.axes( projection='3d')
 
@@ -76,10 +83,10 @@ def show_3d(x_start,x_end,y_start,y_end,all_mae_histories):
     ax3.plot_surface(X,Y,Z,cmap='rainbow')
     plt.xlabel("tree_number")
     plt.ylabel("depth")
-    plt.legend("accuracy")
+    plt.title(u'子树数和深度关系', FontProperties=font)
     plt.show()
 
 
-#discussion_rfc(5,50,5,50)    
+discussion_rfc(5,50,5,50)    
 discussion_rfc_depth(1,50)       
     
