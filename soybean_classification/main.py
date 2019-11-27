@@ -6,8 +6,9 @@ from matplotlib.font_manager import FontProperties
 def showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg):
     font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=14)
     x = np.arange(7)
-    plt.bar(x-0.15,all_algorithms_score,width=0.3,label="vaildate_score")
-    plt.bar(x+0.15,all_algorithms_score_avg,width=0.3,label="avg_score")
+    all_algorithms_score_avg=[-l for l in all_algorithms_score_avg]
+    plt.bar(x,all_algorithms_score,width=0.3,label="vaildate_score")
+    plt.bar(x,all_algorithms_score_avg,width=0.3,label="avg_score")
     plt.legend(bbox_to_anchor=(1.01,1),
                  ncol=1,
                  mode="None",
