@@ -71,9 +71,7 @@ def DecisionTree_Algorithms(x_train, x_validation, y_train, y_validation):
             axis=0)
         # 构建 Keras 模型
         dtc = DecisionTreeClassifier()
-        # 训练模式
         dtc.fit(partial_train_data, partial_train_targets)
-  
         predictions = dtc.predict(val_data)
         accuracy_aux = accuracy_score(val_targets, predictions)
         all_mae_histories.append(accuracy_aux)
@@ -107,9 +105,7 @@ def MLPClassifier_Algorithms(x_train, x_validation, y_train, y_validation):
             [y_train[:i * num_val_samples],
              y_train[(i + 1) * num_val_samples:]],
             axis=0)
-        # 构建 Keras 模型
         mlp = MLPClassifier(random_state=seed, solver='lbfgs')
-        # 训练模式
         mlp.fit(partial_train_data, partial_train_targets)
         predictions = mlp.predict(val_data)
         accuracy_aux = accuracy_score(val_targets, predictions)
@@ -142,9 +138,8 @@ def RandomForestClassifier_Algorithms(x_train, x_validation, y_train, y_validati
             [y_train[:i * num_val_samples],
              y_train[(i + 1) * num_val_samples:]],
             axis=0)
-        # 构建 Keras 模型
+
         rf = RandomForestClassifier(n_estimators=10, max_depth=10)
-        # 训练模式
         rf.fit(partial_train_data, partial_train_targets)
         predictions = rf.predict(val_data)
         accuracy_aux = accuracy_score(val_targets, predictions)
@@ -164,11 +159,8 @@ def Bagging_Algorithms(x_train, x_validation, y_train, y_validation):
     k = 10
     num_val_samples = len(x_train) // k
     for i in range(k):
-        # 准备验证数据，第K个分区的数据
         val_data = x_train[i * num_val_samples: (i + 1) * num_val_samples]
         val_targets = y_train[i * num_val_samples: (i + 1) * num_val_samples]
-
-        # 准备训练数据，其他所有分区的数据
         partial_train_data = np.concatenate(
             [x_train[:i * num_val_samples],
              x_train[(i + 1) * num_val_samples:]],
@@ -177,10 +169,8 @@ def Bagging_Algorithms(x_train, x_validation, y_train, y_validation):
             [y_train[:i * num_val_samples],
              y_train[(i + 1) * num_val_samples:]],
             axis=0)
-        # 构建 Keras 模型
-        clfb = BaggingClassifier(base_estimator= DecisionTreeClassifier()
-                         ,max_samples=0.5,max_features=0.5)
-        # 训练模式
+        clfb = BaggingClassifier(base_estimator= DecisionTreeClassifier(max_depth=10)
+                         ,n_estimators=10,max_samples=0.5,max_features=0.5)
         clfb.fit(partial_train_data, partial_train_targets)
         predictions = clfb.predict(val_data)
         accuracy_aux = accuracy_score(val_targets, predictions)

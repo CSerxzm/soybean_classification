@@ -87,6 +87,6 @@ def show_3d(x_start,x_end,y_start,y_end,all_mae_histories):
     plt.show()
 
 
-discussion_rfc(5,50,5,50)    
+#discussion_rfc(5,50,5,50)    
 discussion_rfc_depth(1,50)       
     
