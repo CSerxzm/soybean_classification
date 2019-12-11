@@ -2,6 +2,8 @@
 
 import pandas as pd
 import numpy as np
+
+
 from sklearn.preprocessing import Imputer
 names = ['Class', 'date', 'plant-stand', 'precip', 'temp', 'hail', 'crop-hist', 'area-damaged',
              'severity', 'seed-tmt', 'germination', 'plant-growth',
@@ -17,6 +19,7 @@ def load_data_set_train():
     dataset = dataset.replace({'?':np.nan})
     for item in dataset.columns.values:
         drop_col(dataset, item, cutoff=0.8)
+    print(dataset.columns.values)
     df1=dataset.iloc[:, 1:]
     df2=dataset.iloc[:, :1]
     imr= Imputer(missing_values = 'NaN', strategy = 'most_frequent', axis = 0 )
@@ -47,8 +50,10 @@ def load_data_set_test(df_col_mean):
     return df
 
 #剔除缺失值大于90%的列
-def drop_col(df, col_name, cutoff=0.9):
+def drop_col(df, col_name, cutoff=0.8):
     n = len(df)
     cnt = df[col_name].count()
     if (float(cnt) / n) < cutoff:
         df.drop(col_name, axis=1, inplace=True)
+        
+load_data_set_train()

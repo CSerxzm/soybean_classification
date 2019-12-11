@@ -2,22 +2,30 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
+import numpy as np
+import soybean_classification
 
 def showbar(all_algorithms_name,all_algorithms_score,all_algorithms_score_avg):
+    
+    plt.figure()
     font = FontProperties(fname=r"C:\Windows\Fonts\simhei.ttf", size=14)
-    x = np.arange(7)
-    all_algorithms_score_avg=[-l for l in all_algorithms_score_avg]
-    plt.bar(x,all_algorithms_score,width=0.3,label="vaildate_score")
-    plt.bar(x,all_algorithms_score_avg,width=0.3,label="avg_score")
+    X = np.arange(5)
+    plt.bar(X,all_algorithms_score,width=0.3,label="vaildate_score")
+    plt.bar(X,[-x for x in all_algorithms_score_avg],width=0.3,label="avg_score")  
+    for x,y in zip(X,all_algorithms_score): 
+        plt.text(x,y+0.01,'%.3f' %y, ha='center',va='bottom')
+    for x,y in zip(X,all_algorithms_score_avg): 
+        plt.text(x,-y-0.10,'%.3f' %y, ha='center',va='bottom')
     plt.legend(bbox_to_anchor=(1.01,1),
                  ncol=1,
                  mode="None",
                  borderaxespad=0,
                  shadow=False,
                  fancybox=True)
-    plt.xticks(np.arange(7),all_algorithms_name, rotation=90)#rotation控制倾斜角度
-    plt.xlabel(u'algorithms',FontProperties=font)
-    plt.ylabel(u'score',FontProperties=font)
+    plt.xticks(X,all_algorithms_name, rotation=30)#rotation控制倾斜角度
+    plt.yticks([i for i in np.arange(-1,1,0.25)],[abs(i) for i in np.arange(-1,1,0.25)])
+    plt.xlabel(u'算法',FontProperties=font)
+    plt.ylabel(u'精确度',FontProperties=font)
     plt.title(u'算法结果', FontProperties=font)
     plt.show()
     
